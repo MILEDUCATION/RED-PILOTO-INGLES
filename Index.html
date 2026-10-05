@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Aprende Inglés - Profe Milhton</title>
+  <style>
+    /* Variables de Color (Modo Claro por defecto) */
+    :root {
+      --bg-principal: #ffffff;
+      --bg-sidebar: #2c3e50;
+      --bg-card: #f9f9f9;
+      --texto-principal: #333333;
+      --texto-sidebar: #ffffff;
+      --borde-color: #dddddd;
+      --color-acento: #e67e22;
+      --color-hover: #1abc9c;
+      --fuente-actual: Arial, sans-serif;
+      --tamano-texto: 16px;
+    }
+
+    /* Variables Tema Oscuro */
+    body.dark-mode {
+      --bg-principal: #1e1e1e;
+      --bg-sidebar: #111111;
+      --bg-card: #2d2d2d;
+      --texto-principal: #f0f0f0;
+      --texto-sidebar: #e0e0e0;
+      --borde-color: #444444;
+      --color-acento: #f39c12;
+    }
+
+    body {
+      font-family: var(--fuente-actual);
+      font-size: var(--tamano-texto);
+      background-color: var(--bg-principal);
+      color: var(--texto-principal);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    /* Barra Superior Header */
+    .header {
+      background-color: var(--bg-sidebar);
+      color: var(--texto-sidebar);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--borde-color);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-datos {
+      background-color: var(--color-hover);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      font-size: 0.95em;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-datos:hover {
+      background-color: #16a085;
+    }
+
+    .btn-practica-top {
+      background-color: var(--color-acento);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      font-size: 0.95em;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-practica-top:hover {
+      background-color: #d35400;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .controls label {
+      font-size: 0.9em;
+    }
+
+    .controls button, .controls select {
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--borde-color);
+      cursor: pointer;
+      background-color: var(--bg-principal);
+      color: var(--texto-principal);
+    }
+
+    /* Modal / Ventana Emergente de Datos */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: var(--bg-principal);
+      color: var(--texto-principal);
+      padding: 25px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      position: relative;
+      border: 1px solid var(--borde-color);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--texto-principal);
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--color-acento);
+      border-bottom: 2px solid var(--borde-color);
+      padding-bottom: 8px;
+    }
+
+    .info-section {
+      margin-bottom: 15px;
+    }
+
+    .info-section h3 {
+      margin: 10px 0 5px 0;
+      font-size: 1.1em;
+      color: var(--color-hover);
+    }
+
+    .info-section p {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+
+    /* Layout Principal */
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Columna Izquierda */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-sidebar);
+      color: var(--texto-sidebar);
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1rem;
+      border-bottom: 2px solid var(--color-hover);
+      padding-bottom: 5px;
+      margin-top: 15px;
+      color: #f39c12;
+      text-transform: uppercase;
+    }
+
+    .sidebar h2:first-child {
+      margin-top: 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar li {
+      padding: 10px;
+      margin: 6px 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .sidebar li:hover {
+      background-color: var(--color-hover);
+    }
+
+    /* Panel Derecho */
+    .content {
+      flex: 1;
+      padding: 20px 30px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fila Superior de Práctica */
+    .fila-practica-superior {
+      background-color: var(--bg-card);
+      border: 2px solid var(--color-hover);
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .fila-practica-superior select {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--borde-color);
+      background-color: var(--bg-principal);
+      color: var(--texto-principal);
+      font-size: 0.95rem;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    /* Tarjeta genérica con tooltip */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--borde-color);
+      padding: 15px;
+      text-align: center;
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .card .main-symbol {
+      font-size: 1.6em;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .card .word {
+      color: var(--color-acento);
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .card .past-word {
+      color: #2980b9;
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-top: 3px;
+    }
+
+    .card .phonetic {
+      font-size: 0.95em;
+      color: var(--texto-principal);
+      font-weight: bold;
+      margin-top: 6px;
+      background-color: rgba(230, 126, 34, 0.15);
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Tooltip */
+    .card::after {
+      content: "🔊 Pronunciación: /" attr(data-pronunciacion) "/";
+      position: absolute;
+      bottom: 105%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Estilos del Cuestionario de Práctica */
+    .pregunta-bloque {
+      background: var(--bg-card);
+      border-left: 4px solid var(--color-hover);
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .pregunta-bloque label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    /* Estilos específicos para la vista interactiva del Abecedario */
+    .abecedario-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .letra-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--borde-color);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .enunciado-linea {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95em;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .circulo-negro {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background-color: #000000;
+      color: #ffffff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      cursor: pointer;
+      font-size: 12px;
+      user-select: none;
+      transition: transform 0.1s;
+    }
+
+    .circulo-negro:hover {
+      transform: scale(1.1);
+    }
+
+    .opciones-abecedario label {
+      display: block;
+      margin: 6px 0;
+      cursor: pointer;
+      font-size: 0.95em;
+    }
+
+    .btn-verificar-letra {
+      margin-top: 10px;
+      background-color: var(--color-acento);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-verificar-letra:hover {
+      background-color: #d35400;
+    }
+
+    .resultado-texto {
+      margin-top: 8px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <header class="header">
+    <div>
+      <button class="btn-datos" onclick="abrirModal()">👤 Mis Datos</button>
+    </div>
+
+    <div class="controls">
+      <button onclick="toggleTema()">🌓 Cambiar Modo</button>
+
+      <div>
+        <label for="font-size">Tamaño:</label>
+        <select id="font-size" onchange="cambiarTamanoTexto(this.value)">
+          <option value="14px">Pequeño</option>
+          <option value="16px" selected>Mediano</option>
+          <option value="19px">Grande</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="font-family">Fuente:</label>
+        <select id="font-family" onchange="cambiarTipoFuente(this.value)">
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Courier New', monospace">Courier New</option>
+          <option value="'Verdana', sans-serif">Verdana</option>
+        </select>
+      </div>
+
+      <!-- Botón Practicar en la parte superior derecha -->
+      <button class="btn-practica-top" onclick="activarPracticaGlobal()">🎯 Practicar</button>
+    </div>
+  </header>
+
+  <!-- Ventana Emergente (Modal) -->
+  <div class="modal-overlay" id="modal-datos" onclick="cerrarModalAfuera(event)">
+    <div class="modal-content">
+      <span class="close-btn" onclick="cerrarModal()">&times;</span>
+      <h2>Información del Docente</h2>
+      
+      <div class="info-section">
+        <h3>🇪🇸 Español:</h3>
+        <p><strong>Docente:</strong> Milhton Edwin Perafán</p>
+        <p><strong>Origen:</strong> Soy de Popayán, Colombia.</p>
+        <p><strong>Mis gustos:</strong> Jugar ajedrez, trotar y leer.</p>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--borde-color);">
+
+      <div class="info-section">
+        <h3>🇬🇧 English:</h3>
+        <p><strong>Teacher:</strong> My name is Milhton Edwin Perafán.</p>
+        <p><strong>Origin:</strong> I am from Popayán, Colombia.</p>
+        <p><strong>My hobbies:</strong> Playing chess, jogging, and reading.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Columna Izquierda -->
+    <nav class="sidebar">
+      <h2>🔤 Abecedario</h2>
+      <ul>
+        <li onclick="mostrarTema('abecedario')">El Abecedario (A-Z)</li>
+      </ul>
+
+      <h2>👤 Gramática</h2>
+      <ul>
+        <li onclick="mostrarTema('pronombresPersonales')">🙋 Pronombres Personales</li>
+        <li onclick="mostrarTema('adjetivosPosesivos')">🎒 Adjetivos Posesivos</li>
+        <li onclick="mostrarTema('pronombresPosesivos')">🔑 Pronombres Posesivos</li>
+      </ul>
+
+      <h2>🔢 Números</h2>
+      <ul>
+        <li onclick="mostrarTema('numeros')">Números (1 al Trillón)</li>
+        <li onclick="mostrarTema('ordinales')">Ordinales (1st-5th)</li>
+      </ul>
+
+      <h2>📅 Calendario</h2>
+      <ul>
+        <li onclick="mostrarTema('dias')">Días de la Semana</li>
+        <li onclick="mostrarTema('meses')">Meses del Año</li>
+      </ul>
+
+      <h2>⚡ Verbos</h2>
+      <ul>
+        <li onclick="mostrarTema('verbosRegulares')">📌 100 Verbos Regulares (Pres./Pas.)</li>
+        <li onclick="mostrarTema('verbosIrregulares')">🔀 100 Verbos Irregulares (Pres./Pas.)</li>
+      </ul>
+
+      <h2>🗣️ Vocabulario</h2>
+      <ul>
+        <li onclick="mostrarTema('familia')">👨‍👩‍👧‍👦 Familia y Amigos</li>
+        <li onclick="mostrarTema('universo')">🌌 Universo y Astronomía</li>
+        <li onclick="mostrarTema('animales')">🐾 100 Animales</li>
+        <li onclick="mostrarTema('cuerpo')">Partes del Cuerpo</li>
+        <li onclick="mostrarTema('colores')">Los Colores</li>
+        <li onclick="mostrarTema('saludos')">Saludos Comunes</li>
+      </ul>
+    </nav>
+
+    <!-- Panel Derecho -->
+    <main class="content">
+      
+      <!-- Fila Superior de Práctica -->
+      <div class="fila-practica-superior">
+        <strong style="color: var(--color-acento);">✏️ Modo Práctica:</strong>
+        <label for="select-practica">Elige un tema para evaluarte:</label>
+        <select id="select-practica" onchange="iniciarPractica(this.value)">
+          <option value="">-- Seleccionar Práctica --</option>
+          <option value="abecedario">Abecedario</option>
+          <option value="pronombresPersonales">Pronombres Personales</option>
+          <option value="adjetivosPosesivos">Adjetivos Posesivos</option>
+          <option value="pronombresPosesivos">Pronombres Posesivos</option>
+          <option value="numeros">Números</option>
+          <option value="ordinales">Números Ordinales</option>
+          <option value="dias">Días de la Semana</option>
+          <option value="meses">Meses del Año</option>
+          <option value="verbosRegulares">Verbos Regulares</option>
+          <option value="verbosIrregulares">Verbos Irregulares</option>
+          <option value="familia">Familia y Amigos</option>
+          <option value="universo">Universo y Astronomía</option>
+          <option value="animales">Animales</option>
+          <option value="cuerpo">Partes del Cuerpo</option>
+          <option value="colores">Los Colores</option>
+          <option value="saludos">Saludos Comunes</option>
+        </select>
+      </div>
+
+      <h1 id="titulo-tema">Selecciona un tema del menú izquierdo</h1>
+      <p id="instruccion-audio" style="display:none; color: var(--color-hover); font-weight: bold;">
+        💡 Haz clic en cualquier tarjeta para escuchar la pronunciación exacta.
+      </p>
+
+      <div class="grid-cards" id="contenedor-tarjetas">
+        <p>Elige una opción de la izquierda para estudiar o presiona el botón "🎯 Practicar" en la esquina superior derecha.</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Banco de Datos Completo
+    const datos = {
+      abecedario: [
+        { simbolo: 'A', ingles: 'A', pronunciacion: 'ei', opciones: ['A', 'H', 'Z'], correcta: 'A' },
+        { simbolo: 'B', ingles: 'B', pronunciacion: 'Bi', opciones: ['B', 'P', 'V'], correcta: 'B' },
+        { simbolo: 'C', ingles: 'C', pronunciacion: 'ci', opciones: ['C', 'S', 'Z'], correcta: 'C' },
+        { simbolo: 'D', ingles: 'D', pronunciacion: 'Di', opciones: ['D', 'T', 'G'], correcta: 'D' },
+        { simbolo: 'E', ingles: 'E', pronunciacion: 'I', opciones: ['E', 'I', 'A'], correcta: 'E' },
+        { simbolo: 'F', ingles: 'F', pronunciacion: 'Ef', opciones: ['F', 'S', 'X'], correcta: 'F' },
+        { simbolo: 'G', ingles: 'G', pronunciacion: 'Dji', opciones: ['G', 'J', 'Y'], correcta: 'G' },
+        { simbolo: 'H', ingles: 'H', pronunciacion: 'Eich', opciones: ['H', 'A', 'E'], correcta: 'H' },
+        { simbolo: 'I', ingles: 'I', pronunciacion: 'Ai', opciones: ['I', 'E', 'Y'], correcta: 'I' },
+        { simbolo: 'J', ingles: 'J', pronunciacion: 'Djei', opciones: ['J', 'G', 'K'], correcta: 'J' },
+        { simbolo: 'K', ingles: 'K', pronunciacion: 'Kei', opciones: ['K', 'Q', 'C'], correcta: 'K' },
+        { simbolo: 'L', ingles: 'L', pronunciacion: 'El', opciones: ['L', 'M', 'N'], correcta: 'L' },
+        { simbolo: 'M', ingles: 'M', pronunciacion: 'Em', opciones: ['M', 'N', 'L'], correcta: 'M' },
+        { simbolo: 'N', ingles: 'N', pronunciacion: 'En', opciones: ['N', 'M', 'W'], correcta: 'N' },
+        { simbolo: 'O', ingles: 'O', pronunciacion: 'Ou', opciones: ['O', 'U', 'A'], correcta: 'O' },
+        { simbolo: 'P', ingles: 'P', pronunciacion: 'Pi', opciones: ['P', 'B', 'T'], correcta: 'P' },
+        { simbolo: 'Q', ingles: 'Q', pronunciacion: 'Kiu', opciones: ['Q', 'K', 'U'], correcta: 'Q' },
+        { simbolo: 'R', ingles: 'R', pronunciacion: 'Ar', opciones: ['R', 'L', 'A'], correcta: 'R' },
+        { simbolo: 'S', ingles: 'S', pronunciacion: 'Es', opciones: ['S', 'X', 'C'], correcta: 'S' },
+        { simbolo: 'T', ingles: 'T', pronunciacion: 'Ti', opciones: ['T', 'D', 'P'], correcta: 'T' },
+        { simbolo: 'U', ingles: 'U', pronunciacion: 'Iu', opciones: ['U', 'O', 'W'], correcta: 'U' },
+        { simbolo: 'V', ingles: 'V', pronunciacion: 'Vi', opciones: ['V', 'B', 'W'], correcta: 'V' },
+        { simbolo: 'W', ingles: 'W', pronunciacion: 'Dábiu', opciones: ['W', 'V', 'U'], correcta: 'W' },
+        { simbolo: 'X', ingles: 'X', pronunciacion: 'Eks', opciones: ['X', 'S', 'Z'], correcta: 'X' },
+        { simbolo: 'Y', ingles: 'Y', pronunciacion: 'Uai', opciones: ['Y', 'I', 'W'], correcta: 'Y' },
+        { simbolo: 'Z', ingles: 'Z', pronunciacion: 'Zi', opciones: ['Z', 'S', 'C'], correcta: 'Z' }
+      ],
+      pronombresPersonales: [
+        { simbolo: 'Yo', ingles: 'I', pronunciacion: 'Ai' },
+        { simbolo: 'Tú / Usted', ingles: 'You', pronunciacion: 'Iu' },
+        { simbolo: 'Él', ingles: 'He', pronunciacion: 'Ji' },
+        { simbolo: 'Ella', ingles: 'She', pronunciacion: 'Shi' },
+        { simbolo: 'Ello / Eso (cosa o animal)', ingles: 'It', pronunciacion: 'It' },
+        { simbolo: 'Nosotros / Nosotras', ingles: 'We', pronunciacion: 'Ui' },
+        { simbolo: 'Vosotros / Ustedes', ingles: 'You', pronunciacion: 'Iu' },
+        { simbolo: 'Ellos / Ellas', ingles: 'They', pronunciacion: 'Dei' }
+      ],
+      adjetivosPosesivos: [
+        { simbolo: 'Mi / Mis', ingles: 'My', pronunciacion: 'Mai' },
+        { simbolo: 'Tu / Tus / Su (de usted)', ingles: 'Your', pronunciacion: 'Ior' },
+        { simbolo: 'Su / Sus (de él)', ingles: 'His', pronunciacion: 'Jis' },
+        { simbolo: 'Su / Sus (de ella)', ingles: 'Her', pronunciacion: 'Jer' },
+        { simbolo: 'Su / Sus (de algo / animal)', ingles: 'Its', pronunciacion: 'Its' },
+        { simbolo: 'Nuestro / Nuestra / s', ingles: 'Our', pronunciacion: 'Auar' },
+        { simbolo: 'Vuestro / Su (de ustedes)', ingles: 'Your', pronunciacion: 'Ior' },
+        { simbolo: 'Su / Sus (de ellos/ellas)', ingles: 'Their', pronunciacion: 'Deir' }
+      ],
+      pronombresPosesivos: [
+        { simbolo: 'Mío / Mía / s', ingles: 'Mine', pronunciacion: 'Main' },
+        { simbolo: 'Tuyo / Tuya / s', ingles: 'Yours', pronunciacion: 'Iors' },
+        { simbolo: 'Suyo / Suya / s (de él)', ingles: 'His', pronunciacion: 'Jis' },
+        { simbolo: 'Suyo / Suya / s (de ella)', ingles: 'Hers', pronunciacion: 'Jers' },
+        { simbolo: 'Suyo (de algo / animal)', ingles: 'Its', pronunciacion: 'Its' },
+        { simbolo: 'Nuestro / Nuestra / s', ingles: 'Ours', pronunciacion: 'Auars' },
+        { simbolo: 'Vuestro / Suyo (de ustedes)', ingles: 'Yours', pronunciacion: 'Iors' },
+        { simbolo: 'Suyo / Suya / s (de ellos/ellas)', ingles: 'Theirs', pronunciacion: 'Deirs' }
+      ],
+      numeros: [
+        { simbolo: '1', ingles: 'One', pronunciacion: 'Uan' },
+        { simbolo: '2', ingles: 'Two', pronunciacion: 'Tu' },
+        { simbolo: '3', ingles: 'Three', pronunciacion: 'Zrii' },
+        { simbolo: '4', ingles: 'Four', pronunciacion: 'For' },
+        { simbolo: '5', ingles: 'Five', pronunciacion: 'Faiv' },
+        { simbolo: '6', ingles: 'Six', pronunciacion: 'Siks' },
+        { simbolo: '7', ingles: 'Seven', pronunciacion: 'Seven' },
+        { simbolo: '8', ingles: 'Eight', pronunciacion: 'Eit' },
+        { simbolo: '9', ingles: 'Nine', pronunciacion: 'Nain' },
+        { simbolo: '10', ingles: 'Ten', pronunciacion: 'Ten' },
+        { simbolo: '11', ingles: 'Eleven', pronunciacion: 'Ileven' },
+        { simbolo: '12', ingles: 'Twelve', pronunciacion: 'Tuelv' },
+        { simbolo: '13', ingles: 'Thirteen', pronunciacion: 'Zertiin' },
+        { simbolo: '14', ingles: 'Fourteen', pronunciacion: 'Fortiin' },
+        { simbolo: '15', ingles: 'Fifteen', pronunciacion: 'Fiftiin' },
+        { simbolo: '16', ingles: 'Sixteen', pronunciacion: 'Sikstiin' },
+        { simbolo: '17', ingles: 'Seventeen', pronunciacion: 'Seventiin' },
+        { simbolo: '18', ingles: 'Eighteen', pronunciacion: 'Eitiin' },
+        { simbolo: '19', ingles: 'Nineteen', pronunciacion: 'Naintiin' },
+        { simbolo: '20', ingles: 'Twenty', pronunciacion: 'Tuenti' },
+        { simbolo: '30', ingles: 'Thirty', pronunciacion: 'Zirti' },
+        { simbolo: '40', ingles: 'Forty', pronunciacion: 'Forti' },
+        { simbolo: '50', ingles: 'Fifty', pronunciacion: 'Fifti' },
+        { simbolo: '60', ingles: 'Sixty', pronunciacion: 'Siksti' },
+        { simbolo: '70', ingles: 'Seventy', pronunciacion: 'Seventi' },
+        { simbolo: '80', ingles: 'Eighty', pronunciacion: 'Eiti' },
+        { simbolo: '90', ingles: 'Ninety', pronunciacion: 'Nainti' },
+        { simbolo: '100', ingles: 'One Hundred', pronunciacion: 'Uan Jándred' },
+        { simbolo: '200', ingles: 'Two Hundred', pronunciacion: 'Tu Jándred' },
+        { simbolo: '300', ingles: 'Three Hundred', pronunciacion: 'Zrii Jándred' },
+        { simbolo: '400', ingles: 'Four Hundred', pronunciacion: 'For Jándred' },
+        { simbolo: '500', ingles: 'Five Hundred', pronunciacion: 'Faiv Jándred' },
+        { simbolo: '600', ingles: 'Six Hundred', pronunciacion: 'Siks Jándred' },
+        { simbolo: '700', ingles: 'Seven Hundred', pronunciacion: 'Seven Jándred' },
+        { simbolo: '800', ingles: 'Eight Hundred', pronunciacion: 'Eit Jándred' },
+        { simbolo: '900', ingles: 'Nine Hundred', pronunciacion: 'Nain Jándred' },
+        { simbolo: '1.000', ingles: 'One Thousand', pronunciacion: 'Uan Zaosand' },
+        { simbolo: '10.000', ingles: 'Ten Thousand', pronunciacion: 'Ten Zaosand' },
+        { simbolo: '1.000.000', ingles: 'One Million', pronunciacion: 'Uan Milion' },
+        { simbolo: '10.000.000', ingles: 'Ten Million', pronunciacion: 'Ten Milion' },
+        { simbolo: '1.000.000.000', ingles: 'One Billion', pronunciacion: 'Uan Bilion' },
+        { simbolo: '1.000.000.000.000', ingles: 'One Trillion', pronunciacion: 'Uan Trilion' }
+      ],
+      ordinales: [
+        { simbolo: '1st', ingles: 'First', pronunciacion: 'Ferst' },
+        { simbolo: '2nd', ingles: 'Second', pronunciacion: 'Sékond' },
+        { simbolo: '3rd', ingles: 'Third', pronunciacion: 'Zerd' },
+        { simbolo: '4th', ingles: 'Fourth', pronunciacion: 'Forz' },
+        { simbolo: '5th', ingles: 'Fifth', pronunciacion: 'Fifz' }
+      ],
+      dias: [
+        { simbolo: 'Lunes', ingles: 'Monday', pronunciacion: 'Mandei' },
+        { simbolo: 'Martes', ingles: 'Tuesday', pronunciacion: 'Tiusdei' },
+        { simbolo: 'Miércoles', ingles: 'Wednesday', pronunciacion: 'Uensdei' },
+        { simbolo: 'Jueves', ingles: 'Thursday', pronunciacion: 'Zersdei' },
+        { simbolo: 'Viernes', ingles: 'Friday', pronunciacion: 'Fraidei' },
+        { simbolo: 'Sábado', ingles: 'Saturday', pronunciacion: 'Sáturdei' },
+        { simbolo: 'Domingo', ingles: 'Sunday', pronunciacion: 'Sandei' }
+      ],
+      meses: [
+        { simbolo: 'Enero', ingles: 'January', pronunciacion: 'Djánuari' },
+        { simbolo: 'Febrero', ingles: 'February', pronunciacion: 'Fébruari' },
+        { simbolo: 'Marzo', ingles: 'March', pronunciacion: 'March' },
+        { simbolo: 'Abril', ingles: 'April', pronunciacion: 'Eipril' },
+        { simbolo: 'Mayo', ingles: 'May', pronunciacion: 'Mei' },
+        { simbolo: 'Junio', ingles: 'June', pronunciacion: 'Djun' },
+        { simbolo: 'Julio', ingles: 'July', pronunciacion: 'Djulai' },
+        { simbolo: 'Agosto', ingles: 'August', pronunciacion: 'Ogust' },
+        { simbolo: 'Septiembre', ingles: 'September', pronunciacion: 'September' },
+        { simbolo: 'Octubre', ingles: 'October', pronunciacion: 'Oktouber' },
+        { simbolo: 'Noviembre', ingles: 'November', pronunciacion: 'November' },
+        { simbolo: 'Diciembre', ingles: 'December', pronunciacion: 'Disember' }
+      ],
+      verbosRegulares: [
+        { simbolo: '👍 Aceptar', ingles: 'Accept', pasado: 'Accepted', pronunciacion: 'Aksépt / Akséptid' },
+        { simbolo: '➕ Añadir', ingles: 'Add', pasado: 'Added', pronunciacion: 'Ad / Ádid' },
+        { simbolo: '🤝 Estar de acuerdo', ingles: 'Agree', pasado: 'Agreed', pronunciacion: 'Agrí / Agríid' },
+        { simbolo: '🔓 Permitir', ingles: 'Allow', pasado: 'Allowed', pronunciacion: 'Aláu / Aláud' },
+        { simbolo: '🗣️ Responder', ingles: 'Answer', pasado: 'Answered', pronunciacion: 'Ánser / Ánserd' },
+        { simbolo: '❓ Preguntar', ingles: 'Ask', pasado: 'Asked', pronunciacion: 'Ask / Askt' },
+        { simbolo: '🧠 Creer', ingles: 'Believe', pasado: 'Believed', pronunciacion: 'Bilíiv / Bilíivd' },
+        { simbolo: '📞 Llamar', ingles: 'Call', pasado: 'Called', pronunciacion: 'Kol / Kold' },
+        { simbolo: '🔄 Cambiar', ingles: 'Change', pasado: 'Changed', pronunciacion: 'Cheindj / Cheindjd' },
+        { simbolo: '🧹 Limpiar', ingles: 'Clean', pasado: 'Cleaned', pronunciacion: 'Kliin / Kliind' },
+        { simbolo: '🚪 Cerrar', ingles: 'Close', pasado: 'Closed', pronunciacion: 'Klous / Klousd' },
+        { simbolo: '🍳 Cocinar', ingles: 'Cook', pasado: 'Cooked', pronunciacion: 'Kuuk / Kuukt' },
+        { simbolo: '💃 Bailar', ingles: 'Dance', pasado: 'Danced', pronunciacion: 'Dans / Danst' },
+        { simbolo: '🤝 Ayudar', ingles: 'Help', pasado: 'Helped', pronunciacion: 'Jelp / Jelpt' },
+        { simbolo: '❤️ Gustar', ingles: 'Like', pasado: 'Liked', pronunciacion: 'Laik / Laikt' },
+        { simbolo: '🎧 Escuchar', ingles: 'Listen', pasado: 'Listened', pronunciacion: 'Lísen / Lísend' },
+        { simbolo: '👀 Mirar', ingles: 'Look', pasado: 'Looked', pronunciacion: 'Luuk / Luukt' },
+        { simbolo: '💖 Amar', ingles: 'Love', pasado: 'Loved', pronunciacion: 'Lav / Lavd' },
+        { simbolo: '🤲 Necesitar', ingles: 'Need', pasado: 'Needed', pronunciacion: 'Niid / Níidid' },
+        { simbolo: '📖 Abrir', ingles: 'Open', pasado: 'Opened', pronunciacion: 'Óupen / Óupend' },
+        { simbolo: '🎮 Jugar / Tocar', ingles: 'Play', pasado: 'Played', pronunciacion: 'Pleai / Pleaid' },
+        { simbolo: '🏁 Empezar', ingles: 'Start', pasado: 'Started', pronunciacion: 'Start / Stártid' },
+        { simbolo: '💬 Hablar', ingles: 'Talk', pasado: 'Talked', pronunciacion: 'Tok / Tokt' },
+        { simbolo: '🛠️ Usar', ingles: 'Use', pasado: 'Used', pronunciacion: 'Ius / Iusd' },
+        { simbolo: '🚶 Caminar', ingles: 'Walk', pasado: 'Walked', pronunciacion: 'Uok / Uokt' },
+        { simbolo: '💭 Querer', ingles: 'Want', pasado: 'Wanted', pronunciacion: 'Uont / Uóntid' },
+        { simbolo: '💼 Trabajar', ingles: 'Work', pasado: 'Worked', pronunciacion: 'Uerk / Uerkt' },
+        { simbolo: '🎯 Alcanzar', ingles: 'Achieve', pasado: 'Achieved', pronunciacion: 'Achíiv / Achíivd' },
+        { simbolo: '🎭 Actuar', ingles: 'Act', pasado: 'Acted', pronunciacion: 'Akt / Áktid' },
+        { simbolo: '🎨 Admirar', ingles: 'Admire', pasado: 'Admired', pronunciacion: 'Admáir / Admáird' },
+        { simbolo: '📢 Anunciar', ingles: 'Announce', pasado: 'Announced', pronunciacion: 'Anáuns / Anáunst' },
+        { simbolo: '👏 Aplaudir', ingles: 'Applaud', pasado: 'Applauded', pronunciacion: 'Aplód / Aplódid' },
+        { simbolo: '🎁 Apreciar', ingles: 'Appreciate', pasado: 'Appreciated', pronunciacion: 'Apríshieit / Apríshieitid' },
+        { simbolo: '📌 Aprobar', ingles: 'Approve', pasado: 'Approved', pronunciacion: 'Aprúuv / Aprúuvd' },
+        { simbolo: '📐 Arreglar', ingles: 'Arrange', pasado: 'Arranged', pronunciacion: 'Arreindj / Arreindjd' },
+        { simbolo: '🛬 Llegar', ingles: 'Arrive', pasado: 'Arrived', pronunciacion: 'Arráiv / Arráivd' },
+        { simbolo: '🙈 Evitar', ingles: 'Avoid', pasado: 'Avoided', pronunciacion: 'Evóid / Evóidid' },
+        { simbolo: '🍞 Hornear', ingles: 'Bake', pasado: 'Baked', pronunciacion: 'Beik / Beikt' },
+        { simbolo: '⛺ Acampar', ingles: 'Camp', pasado: 'Camped', pronunciacion: 'Kamp / Kampt' },
+        { simbolo: '🚫 Cancelar', ingles: 'Cancel', pasado: 'Canceled', pronunciacion: 'Kánsel / Kánseld' },
+        { simbolo: '🧰 Cuidar', ingles: 'Care', pasado: 'Cared', pronunciacion: 'Keer / Keerd' },
+        { simbolo: '📦 Llevar', ingles: 'Carry', pasado: 'Carried', pronunciacion: 'Kári / Kárid' },
+        { simbolo: '🎉 Celebrar', ingles: 'Celebrate', pasado: 'Celebrated', pronunciacion: 'Sélibreit / Sélibreitid' },
+        { simbolo: '✔️ Comprobar', ingles: 'Check', pasado: 'Checked', pronunciacion: 'Chek / Chekt' },
+        { simbolo: '🧗 Escalar', ingles: 'Climb', pasado: 'Climbed', pronunciacion: 'Klaimb / Klaimbd' },
+        { simbolo: '📊 Comparar', ingles: 'Compare', pasado: 'Compared', pronunciacion: 'Kompéer / Kompéerd' },
+        { simbolo: '🧩 Completar', ingles: 'Complete', pasado: 'Completed', pronunciacion: 'Komplíit / Komplíitid' },
+        { simbolo: '🔒 Confirmar', ingles: 'Confirm', pasado: 'Confirmed', pronunciacion: 'Konférm / Konférmd' },
+        { simbolo: '💡 Considerar', ingles: 'Consider', pasado: 'Considered', pronunciacion: 'Konsíder / Konsíderd' },
+        { simbolo: '➡️ Continuar', ingles: 'Continue', pasado: 'Continued', pronunciacion: 'Kontíniu / Kontíniud' },
+        { simbolo: '🔢 Contar', ingles: 'Count', pasado: 'Counted', pronunciacion: 'Kaunt / Káuntid' },
+        { simbolo: '😭 Llorar', ingles: 'Cry', pasado: 'Cried', pronunciacion: 'Krai / Kraid' },
+        { simbolo: '📐 Decidir', ingles: 'Decide', pasado: 'Decided', pronunciacion: 'Disáid / Disáidid' },
+        { simbolo: '🎨 Diseñar', ingles: 'Design', pasado: 'Designed', pronunciacion: 'Disáin / Disáind' },
+        { simbolo: '💥 Destruir', ingles: 'Destroy', pasado: 'Destroyed', pronunciacion: 'Distrói / Distróid' },
+        { simbolo: '🔍 Descubrir', ingles: 'Discover', pasado: 'Discovered', pronunciacion: 'Diskóver / Diskóverd' },
+        { simbolo: '👗 Vestir', ingles: 'Dress', pasado: 'Dressed', pronunciacion: 'Dres / Drest' },
+        { simbolo: '🧼 Secar', ingles: 'Dry', pasado: 'Dried', pronunciacion: 'Drai / Draid' },
+        { simbolo: '🔚 Terminar', ingles: 'End', pasado: 'Ended', pronunciacion: 'End / Éndid' },
+        { simbolo: '🥳 Disfrutar', ingles: 'Enjoy', pasado: 'Enjoyed', pronunciacion: 'Endjói / Endjóid' },
+        { simbolo: '🚪 Entrar', ingles: 'Enter', pasado: 'Entered', pronunciacion: 'Énter / Énterd' },
+        { simbolo: '🗣️ Explicar', ingles: 'Explain', pasado: 'Explained', pronunciacion: 'Ekspléin / Ekspléind' },
+        { simbolo: '🏁 Finalizar', ingles: 'Finish', pasado: 'Finished', pronunciacion: 'Fínish / Fínisht' },
+        { simbolo: '🪟 Arreglar', ingles: 'Fix', pasado: 'Fixed', pronunciacion: 'Fiks / Fikst' },
+        { simbolo: '🎯 Adivinar', ingles: 'Guess', pasado: 'Guessed', pronunciacion: 'Ges / Gest' },
+        { simbolo: '💡 Imaginar', ingles: 'Imagine', pasado: 'Imagined', pronunciacion: 'Imádjin / Imádjind' },
+        { simbolo: '📈 Mejorar', ingles: 'Improve', pasado: 'Improved', pronunciacion: 'Imprúuv / Imprúuvd' },
+        { simbolo: 'ℹ️ Informar', ingles: 'Inform', pasado: 'Informed', pronunciacion: 'Inform / Informd' },
+        { simbolo: '🔍 Inspeccionar', ingles: 'Inspect', pasado: 'Inspected', pronunciacion: 'Inspékt / Inspéktid' },
+        { simbolo: '✉️ Invitar', ingles: 'Invite', pasado: 'Invited', pronunciacion: 'Inváit / Inváitid' },
+        { simbolo: '🦘 Saltar', ingles: 'Jump', pasado: 'Jumped', pronunciacion: 'Djamp / Djampt' },
+        { simbolo: '🥾 Patear', ingles: 'Kick', pasado: 'Kicked', pronunciacion: 'Kik / Kikt' },
+        { simbolo: '💋 Besar', ingles: 'Kiss', pasado: 'Kissed', pronunciacion: 'Kis / Kist' },
+        { simbolo: '🏷️ Etiquetar', ingles: 'Label', pasado: 'Labeled', pronunciacion: 'Léibel / Léibeld' },
+        { simbolo: '🤣 Reír', ingles: 'Laugh', pasado: 'Laughed', pronunciacion: 'Laf / Laft' },
+        { simbolo: '📐 Medir', ingles: 'Measure', pasado: 'Measured', pronunciacion: 'Méshur / Méshurd' },
+        { simbolo: '🚚 Mover', ingles: 'Move', pasado: 'Moved', pronunciacion: 'Muuv / Muuvd' },
+        { simbolo: '📝 Notar', ingles: 'Notice', pasado: 'Noticed', pronunciacion: 'Nóutis / Nóutist' },
+        { simbolo: '🎨 Pintar', ingles: 'Paint', pasado: 'Painted', pronunciacion: 'Peint / Péintid' },
+        { simbolo: '⏸️ Pausar', ingles: 'Pause', pasado: 'Paused', pronunciacion: 'Pos / Posd' },
+        { simbolo: '📜 Planear', ingles: 'Plan', pasado: 'Planned', pronunciacion: 'Plan / Pland' },
+        { simbolo: '👈 Señalar', ingles: 'Point', pasado: 'Pointed', pronunciacion: 'Point / Póintid' },
+        { simbolo: '🎁 Preferir', ingles: 'Prefer', pasado: 'Preferred', pronunciacion: 'Prifér / Priférd' },
+        { simbolo: '🏋️ Preparar', ingles: 'Prepare', pasado: 'Prepared', pronunciacion: 'Pripéer / Pripéerd' },
+        { simbolo: '🖨️ Imprimir', ingles: 'Print', pasado: 'Printed', pronunciacion: 'Print / Príntid' },
+        { simbolo: '🛡️ Proteger', ingles: 'Protect', pasado: 'Protected', pronunciacion: 'Protékt / Protéktid' },
+        { simbolo: '🌧️ Llover', ingles: 'Rain', pasado: 'Rained', pronunciacion: 'Rein / Reind' },
+        { simbolo: '📖 Recordar', ingles: 'Remember', pasado: 'Remembered', pronunciacion: 'Rimémber / Rimémberd' },
+        { simbolo: '🔁 Repetir', ingles: 'Repeat', pasado: 'Repeated', pronunciacion: 'Ripíit / Ripíitid' },
+        { simbolo: '💾 Guardar', ingles: 'Save', pasado: 'Saved', pronunciacion: 'Seiv / Seivd' },
+        { simbolo: '🔍 Buscar', ingles: 'Search', pasado: 'Searched', pronunciacion: 'Serch / Sercht' },
+        { simbolo: '🛍️ Comprar', ingles: 'Shop', pasado: 'Shopped', pronunciacion: 'Shop / Shopt' },
+        { simbolo: '🛑 Parar', ingles: 'Stop', pasado: 'Stopped', pronunciacion: 'Stop / Stopt' },
+        { simbolo: '📚 Estudiar', ingles: 'Study', pasado: 'Studied', pronunciacion: 'Stádi / Stádid' },
+        { simbolo: '✈️ Viajar', ingles: 'Travel', pasado: 'Traveled', pronunciacion: 'Trável / Tráveld' },
+        { simbolo: '🧼 Lavar', ingles: 'Wash', pasado: 'Washed', pronunciacion: 'Uosh / Uosht' },
+        { simbolo: '📺 Ver', ingles: 'Watch', pasado: 'Watched', pronunciacion: 'Uotch / Uotcht' }
+      ],
+      verbosIrregulares: [
+        { simbolo: '🌟 Ser / Estar', ingles: 'Be', pasado: 'Was / Were', pronunciacion: 'Bi / Uos - Uer' },
+        { simbolo: '🐣 Llegar a ser', ingles: 'Become', pasado: 'Became', pronunciacion: 'Bikám / Bikéim' },
+        { simbolo: '🚀 Empezar', ingles: 'Begin', pasado: 'Began', pronunciacion: 'Biguín / Bigán' },
+        { simbolo: '💥 Romper', ingles: 'Break', pasado: 'Broke', pronunciacion: 'Breik / Brouk' },
+        { simbolo: '📦 Traer', ingles: 'Bring', pasado: 'Brought', pronunciacion: 'Bring / Brot' },
+        { simbolo: '🏗️ Construir', ingles: 'Build', pasado: 'Built', pronunciacion: 'Bild / Bilt' },
+        { simbolo: '🛒 Comprar', ingles: 'Buy', pasado: 'Bought', pronunciacion: 'Bai / Bot' },
+        { simbolo: '🎯 Atrapar', ingles: 'Catch', pasado: 'Caught', pronunciacion: 'Kach / Kot' },
+        { simbolo: '👉 Elegir', ingles: 'Choose', pasado: 'Chose', pronunciacion: 'Chuus / Chous' },
+        { simbolo: '🏃 Venir', ingles: 'Come', pasado: 'Came', pronunciacion: 'Kam / Keim' },
+        { simbolo: '💵 Costar', ingles: 'Cost', pasado: 'Cost', pronunciacion: 'Kost / Kost' },
+        { simbolo: '✂️ Cortar', ingles: 'Cut', pasado: 'Cut', pronunciacion: 'Kot / Kot' },
+        { simbolo: '🔨 Hacer', ingles: 'Do', pasado: 'Did', pronunciacion: 'Du / Did' },
+        { simbolo: '✏️ Dibujar', ingles: 'Draw', pasado: 'Drew', pronunciacion: 'Dro / Dru' },
+        { simbolo: '🥤 Beber', ingles: 'Drink', pasado: 'Drank', pronunciacion: 'Drink / Drank' },
+        { simbolo: '🚗 Conducir', ingles: 'Drive', pasado: 'Drove', pronunciacion: 'Draiv / Drouv' },
+        { simbolo: '🍎 Comer', ingles: 'Eat', pasado: 'Ate', pronunciacion: 'Iit / Eit' },
+        { simbolo: '🍂 Caer', ingles: 'Fall', pasado: 'Fell', pronunciacion: 'Fol / Fel' },
+        { simbolo: '🪶 Alimentar', ingles: 'Feed', pasado: 'Fed', pronunciacion: 'Fiid / Fed' },
+        { simbolo: '❤️ Sentir', ingles: 'Feel', pasado: 'Felt', pronunciacion: 'Fiil / Felt' },
+        { simbolo: '🥊 Pelear', ingles: 'Fight', pasado: 'Fought', pronunciacion: 'Fait / Fot' },
+        { simbolo: '🔍 Encontrar', ingles: 'Find', pasado: 'Found', pronunciacion: 'Faind / Faund' },
+        { simbolo: '✈️ Volar', ingles: 'Fly', pasado: 'Flew', pronunciacion: 'Flai / Flu' },
+        { simbolo: '🙈 Olvidar', ingles: 'Forget', pasado: 'Forgot', pronunciacion: 'Forguét / Forgót' },
+        { simbolo: '🧊 Congelar', ingles: 'Freeze', pasado: 'Froze', pronunciacion: 'Friis / Frous' },
+        { simbolo: '🎁 Conseguir', ingles: 'Get', pasado: 'Got', pronunciacion: 'Guet / Got' },
+        { simbolo: '🤲 Dar', ingles: 'Give', pasado: 'Gave', pronunciacion: 'Guiv / Gueiv' },
+        { simbolo: '🚶 Ir', ingles: 'Go', pasado: 'Went', pronunciacion: 'Gou / Uent' },
+        { simbolo: '🌱 Crecer', ingles: 'Grow', pasado: 'Grew', pronunciacion: 'Grou / Gru' },
+        { simbolo: '🎒 Tener', ingles: 'Have', pasado: 'Had', pronunciacion: 'Jav / Jad' },
+        { simbolo: '👂 Oír', ingles: 'Hear', pasado: 'Heard', pronunciacion: 'Jiir / Jerd' },
+        { simbolo: '🙈 Esconder', ingles: 'Hide', pasado: 'Hid', pronunciacion: 'Jaid / Jid' },
+        { simbolo: '🎯 Golpear', ingles: 'Hit', pasado: 'Hit', pronunciacion: 'Jit / Jit' },
+        { simbolo: '🤝 Sostener', ingles: 'Hold', pasado: 'Held', pronunciacion: 'Jould / Held' },
+        { simbolo: '🩹 Lastimar', ingles: 'Hurt', pasado: 'Hurt', pronunciacion: 'Jert / Jert' },
+        { simbolo: '🔑 Mantener', ingles: 'Keep', pasado: 'Kept', pronunciacion: 'Kiip / Kept' },
+        { simbolo: '🧠 Saber / Conocer', ingles: 'Know', pasado: 'Knew', pronunciacion: 'Nou / Niu' },
+        { simbolo: '📐 Liderar', ingles: 'Lead', pasado: 'Led', pronunciacion: 'Liid / Led' },
+        { simbolo: '📖 Aprender', ingles: 'Learn', pasado: 'Learnt / Learned', pronunciacion: 'Lern / Lernt' },
+        { simbolo: '🚪 Dejar / Salir', ingles: 'Leave', pasado: 'Left', pronunciacion: 'Liiv / Left' },
+        { simbolo: '🤝 Prestar', ingles: 'Lend', pasado: 'Lent', pronunciacion: 'Lend / Lent' },
+        { simbolo: '🔓 Permitir', ingles: 'Let', pasado: 'Let', pronunciacion: 'Let / Let' },
+        { simbolo: '🛏️ Mentir / Tumbarse', ingles: 'Lie', pasado: 'Lay', pronunciacion: 'Lai / Lei' },
+        { simbolo: '💡 Encender', ingles: 'Light', pasado: 'Lit', pronunciacion: 'Lait / Lit' },
+        { simbolo: '📉 Perder', ingles: 'Lose', pasado: 'Lost', pronunciacion: 'Luus / Lost' },
+        { simbolo: '🛠️ Hacer / Fabricar', ingles: 'Make', pasado: 'Made', pronunciacion: 'Meik / Meid' },
+        { simbolo: '💭 Significar', ingles: 'Mean', pasado: 'Meant', pronunciacion: 'Miin / Ment' },
+        { simbolo: '🤝 Conocer / Encontrar', ingles: 'Meet', pasado: 'Met', pronunciacion: 'Miit / Met' },
+        { simbolo: '💳 Pagar', ingles: 'Pay', pasado: 'Paid', pronunciacion: 'Pei / Peid' },
+        { simbolo: '📍 Poner', ingles: 'Put', pasado: 'Put', pronunciacion: 'Put / Put' },
+        { simbolo: '📖 Leer', ingles: 'Read', pasado: 'Read', pronunciacion: 'Riid / Red' },
+        { simbolo: '🚴 Montar', ingles: 'Ride', pasado: 'Rode', pronunciacion: 'Raid / Roud' },
+        { simbolo: '🔔 Sonar', ingles: 'Ring', pasado: 'Rang', pronunciacion: 'Ring / Rang' },
+        { simbolo: '🌅 Levantarse', ingles: 'Rise', pasado: 'Rose', pronunciacion: 'Rais / Rous' },
+        { simbolo: '🏃 Correr', ingles: 'Run', pasado: 'Ran', pronunciacion: 'Ron / Ran' },
+        { simbolo: '💬 Decir', ingles: 'Say', pasado: 'Said', pronunciacion: 'Sei / Sed' },
+        { simbolo: '👀 Ver', ingles: 'See', pasado: 'Saw', pronunciacion: 'Sii / So' },
+        { simbolo: '🛍️ Vender', ingles: 'Sell', pasado: 'Sold', pronunciacion: 'Sel / Sold' },
+        { simbolo: '✉️ Enviar', ingles: 'Send', pasado: 'Sent', pronunciacion: 'Send / Sent' },
+        { simbolo: '⚙️ Configurar / Poner', ingles: 'Set', pasado: 'Set', pronunciacion: 'Set / Set' },
+        { simbolo: '🤝 Agitar', ingles: 'Shake', pasado: 'Shook', pronunciacion: 'Sheik / Shuuk' },
+        { simbolo: '☀️ Brillar', ingles: 'Shine', pasado: 'Shone', pronunciacion: 'Shain / Shon' },
+        { simbolo: '🔫 Disparar', ingles: 'Shoot', pasado: 'Shot', pronunciacion: 'Shuut / Shot' },
+        { simbolo: '📺 Mostrar', ingles: 'Show', pasado: 'Showed', pronunciacion: 'Shou / Shoud' },
+        { simbolo: '🚪 Cerrar', ingles: 'Shut', pasado: 'Shut', pronunciacion: 'Shot / Shot' },
+        { simbolo: '🎤 Cantar', ingles: 'Sing', pasado: 'Sang', pronunciacion: 'Sing / Sang' },
+        { simbolo: '🧘 Sentarse', ingles: 'Sit', pasado: 'Sat', pronunciacion: 'Sit / Sat' },
+        { simbolo: '😴 Dormir', ingles: 'Sleep', pasado: 'Slept', pronunciacion: 'Sliip / Slept' },
+        { simbolo: '🗣️ Hablar', ingles: 'Speak', pasado: 'Spoke', pronunciacion: 'Spiik / Spouk' },
+        { simbolo: '💸 Gastar', ingles: 'Spend', pasado: 'Spent', pronunciacion: 'Spend / Spent' },
+        { simbolo: '🧍 Estar de pie', ingles: 'Stand', pasado: 'Stood', pronunciacion: 'Stand / Stuud' },
+        { simbolo: '🥷 Robar', ingles: 'Steal', pasado: 'Stole', pronunciacion: 'Stiil / Stoul' },
+        { simbolo: '🏊 Nadar', ingles: 'Swim', pasado: 'Swam', pronunciacion: 'Suim / Suam' },
+        { simbolo: '🤲 Tomar / Llevar', ingles: 'Take', pasado: 'Took', pronunciacion: 'Teik / Tuuk' },
+        { simbolo: '👨‍🏫 Enseñar', ingles: 'Teach', pasado: 'Taught', pronunciacion: 'Tiich / Tot' },
+        { simbolo: '🗣️ Contar / Decir', ingles: 'Tell', pasado: 'Told', pronunciacion: 'Tel / Told' },
+        { simbolo: '🧠 Pensar', ingles: 'Think', pasado: 'Thought', pronunciacion: 'Zink / Zot' },
+        { simbolo: '🥎 Lanzar', ingles: 'Throw', pasado: 'Threw', pronunciacion: 'Zrou / Zru' },
+        { simbolo: '🧠 Entender', ingles: 'Understand', pasado: 'Understood', pronunciacion: 'Anderstánd / Anderstuud' },
+        { simbolo: '⏰ Despertar', ingles: 'Wake', pasado: 'Woke', pronunciacion: 'Ueik / Uouk' },
+        { simbolo: '👗 Usar ropa', ingles: 'Wear', pasado: 'Wore', pronunciacion: 'Ueer / Uor' },
+        { simbolo: '🏆 Ganar', ingles: 'Win', pasado: 'Won', pronunciacion: 'Uin / Uon' },
+        { simbolo: '✍️ Escribir', ingles: 'Write', pasado: 'Wrote', pronunciacion: 'Rait / Rout' },
+        { simbolo: '🩸 Sangrar', ingles: 'Bleed', pasado: 'Bled', pronunciacion: 'Bliid / Bled' },
+        { simbolo: '💨 Soplar', ingles: 'Blow', pasado: 'Blew', pronunciacion: 'Blou / Blu' },
+        { simbolo: '🔥 Quemar', ingles: 'Burn', pasado: 'Burnt / Burned', pronunciacion: 'Bern / Bernt' },
+        { simbolo: '🧗 Trepar / Aferrarse', ingles: 'Cling', pasado: 'Clung', pronunciacion: 'Kling / Klong' },
+        { simbolo: '🕳️ Cavar', ingles: 'Dig', pasado: 'Dug', pronunciacion: 'Dig / Dog' },
+        { simbolo: '💭 Soñar', ingles: 'Dream', pasado: 'Dreamt / Dreamed', pronunciacion: 'Driim / Dremt' },
+        { simbolo: '🤿 Bucear', ingles: 'Dive', pasado: 'Dove / Dived', pronunciacion: 'Daiv / Douv' },
+        { simbolo: '🪢 Colgar', ingles: 'Hang', pasado: 'Hung', pronunciacion: 'Jang / Jong' },
+        { simbolo: '🧱 Colocar / Trazar', ingles: 'Lay', pasado: 'Laid', pronunciacion: 'Lei / Leid' },
+        { simbolo: '🗣️ Jurar', ingles: 'Swear', pasado: 'Swore', pronunciacion: 'Suéer / Suór' },
+        { simbolo: '🧹 Barrer', ingles: 'Sweep', pasado: 'Swept', pronunciacion: 'Suíip / Suept' }
+      ],
+      familia: [
+        { simbolo: '👨‍👩‍👧‍👦 Familia', ingles: 'Family', pronunciacion: 'Fámili' },
+        { simbolo: '👨 Padre', ingles: 'Father', pronunciacion: 'Fáder' },
+        { simbolo: '👨 Papá', ingles: 'Dad / Papa', pronunciacion: 'Dad / Papá' },
+        { simbolo: '👨 Papi / Pa', ingles: 'Daddy / Pa', pronunciacion: 'Dádi / Pa' },
+        { simbolo: '👩 Madre', ingles: 'Mother', pronunciacion: 'Móder' },
+        { simbolo: '👩 Mamá', ingles: 'Mom / Mum', pronunciacion: 'Mam' },
+        { simbolo: '👩 Mami / Ma', ingles: 'Mommy / Ma', pronunciacion: 'Mami / Ma' },
+        { simbolo: '👴 Abuelo', ingles: 'Grandfather', pronunciacion: 'Grand-fáder' },
+        { simbolo: '👴 Abuelito / Tato', ingles: 'Grandpa / Gramps', pronunciacion: 'Grand-pa / Gramps' },
+        { simbolo: '👵 Abuela', ingles: 'Grandmother', pronunciacion: 'Grand-móder' },
+        { simbolo: '👵 Abuelita', ingles: 'Grandma / Granny', pronunciacion: 'Grand-ma / Gráni' },
+        { simbolo: '👴👵 Abuelos', ingles: 'Grandparents', pronunciacion: 'Grand-porents' },
+        { simbolo: '👦 Hijo', ingles: 'Son', pronunciacion: 'Son' },
+        { simbolo: '👧 Hija', ingles: 'Daughter', pronunciacion: 'Dóter' },
+        { simbolo: '👦👧 Hijos / Niños', ingles: 'Children', pronunciacion: 'Chíldren' },
+        { simbolo: '👦 Nieto', ingles: 'Grandson', pronunciacion: 'Grand-son' },
+        { simbolo: '👧 Nieta', ingles: 'Granddaughter', pronunciacion: 'Grand-dóter' },
+        { simbolo: '👶 Nietos', ingles: 'Grandchildren', pronunciacion: 'Grand-chíldren' },
+        { simbolo: '👦 Hermano', ingles: 'Brother', pronunciacion: 'Bróder' },
+        { simbolo: '👦 Hermanito / Bro', ingles: 'Bro', pronunciacion: 'Brou' },
+        { simbolo: '👧 Hermana', ingles: 'Sister', pronunciacion: 'Síster' },
+        { simbolo: '👧 Hermanita / Sis', ingles: 'Sis', pronunciacion: 'Sis' },
+        { simbolo: '🧔 Tío', ingles: 'Uncle', pronunciacion: 'Ónkel' },
+        { simbolo: '👩 Tía', ingles: 'Aunt', pronunciacion: 'Ant' },
+        { simbolo: '🧑 Primo / Prima', ingles: 'Cousin', pronunciacion: 'Cósin' },
+        { simbolo: '👦 Sobrino', ingles: 'Nephew', pronunciacion: 'Néfiu' },
+        { simbolo: '👧 Sobrina', ingles: 'Niece', pronunciacion: 'Niis' },
+        { simbolo: '👨 Suegro', ingles: 'Father-in-law', pronunciacion: 'Fáder-in-lo' },
+        { simbolo: '👩 Suegra', ingles: 'Mother-in-law', pronunciacion: 'Móder-in-lo' },
+        { simbolo: '👨 Yerno', ingles: 'Son-in-law', pronunciacion: 'Son-in-lo' },
+        { simbolo: '👩 Nuera', ingles: 'Daughter-in-law', pronunciacion: 'Dóter-in-lo' },
+        { simbolo: '👦 Cuñado', ingles: 'Brother-in-law', pronunciacion: 'Bróder-in-lo' },
+        { simbolo: '👧 Cuñada', ingles: 'Sister-in-law', pronunciacion: 'Síster-in-lo' },
+        { simbolo: '🧔 Padrastro', ingles: 'Stepfather', pronunciacion: 'Step-fáder' },
+        { simbolo: '👩 Madrastra', ingles: 'Stepmother', pronunciacion: 'Step-móder' },
+        { simbolo: '👦 Hijastro', ingles: 'Stepson', pronunciacion: 'Step-son' },
+        { simbolo: '👧 Hijastra', ingles: 'Stepdaughter', pronunciacion: 'Step-dóter' },
+        { simbolo: '👦 Hermanastro', ingles: 'Stepbrother', pronunciacion: 'Step-bróder' },
+        { simbolo: '👧 Hermanastra', ingles: 'Stepsister', pronunciacion: 'Step-síster' },
+        { simbolo: '🤵 Esposo / Marido', ingles: 'Husband', pronunciacion: 'Jásband' },
+        { simbolo: '👰 Esposa / Mujer', ingles: 'Wife', pronunciacion: 'Uaif' },
+        { simbolo: '🧑‍🤝‍🧑 Amigo / Amiga', ingles: 'Friend', pronunciacion: 'Frend' },
+        { simbolo: '⭐ Mejor amigo/a', ingles: 'Best friend', pronunciacion: 'Best frend' },
+        { simbolo: '👦 Novio (pareja)', ingles: 'Boyfriend', pronunciacion: 'Bói-frend' },
+        { simbolo: '👧 Novia (pareja)', ingles: 'Girlfriend', pronunciacion: 'Gerl-frend' },
+        { simbolo: '🤵 Novio (boda)', ingles: 'Groom', pronunciacion: 'Groom' },
+        { simbolo: '👰 Novia (boda)', ingles: 'Bride', pronunciacion: 'Braid' },
+        { simbolo: '👨‍💼 Compañero / Pareja', ingles: 'Partner', pronunciacion: 'Pártner' },
+        { simbolo: '🏡 Vecino / Vecina', ingles: 'Neighbor', pronunciacion: 'Néibor' }
+      ],
+      universo: [
+        { simbolo: '🪐 Sistema Solar', ingles: 'Solar System', pronunciacion: 'Sólar Sístem' },
+        { simbolo: '☀️ Sol', ingles: 'Sun', pronunciacion: 'Son' },
+        { simbolo: '🌕 Luna', ingles: 'Moon', pronunciacion: 'Muun' },
+        { simbolo: '🌍 Planeta', ingles: 'Planet', pronunciacion: 'Plánet' },
+        { simbolo: '🪨 Planeta enano', ingles: 'Dwarf Planet', pronunciacion: 'Duorf Plánet' },
+        { simbolo: '☿️ Mercurio', ingles: 'Mercury', pronunciacion: 'Mórkiuri' },
+        { simbolo: '♀️ Venus', ingles: 'Venus', pronunciacion: 'Vínas' },
+        { simbolo: '🌍 Tierra', ingles: 'Earth', pronunciacion: 'Erz' },
+        { simbolo: '♂️ Marte', ingles: 'Mars', pronunciacion: 'Mars' },
+        { simbolo: '♃ Júpiter', ingles: 'Jupiter', pronunciacion: 'Djiúpiter' },
+        { simbolo: '♄ Saturno', ingles: 'Saturn', pronunciacion: 'Sátarn' },
+        { simbolo: '♅ Urano', ingles: 'Uranus', pronunciacion: 'Iuréinas' },
+        { simbolo: '♆ Neptuno', ingles: 'Neptune', pronunciacion: 'Néptun' },
+        { simbolo: '🪨 Plutón', ingles: 'Pluto', pronunciacion: 'Plúutou' },
+        { simbolo: '⭐ Estrella', ingles: 'Star', pronunciacion: 'Star' },
+        { simbolo: '💫 Estrella fugaz', ingles: 'Shooting Star', pronunciacion: 'Shúuting Star' },
+        { simbolo: '💥 Supernova', ingles: 'Supernova', pronunciacion: 'Suupernouva' },
+        { simbolo: '🌌 Constelación', ingles: 'Constellation', pronunciacion: 'Konsteléishon' },
+        { simbolo: '☄️ Cometa', ingles: 'Comet', pronunciacion: 'Kómet' },
+        { simbolo: '🪨 Asteroide', ingles: 'Asteroid', pronunciacion: 'Ásteroid' },
+        { simbolo: '☄️ Meteoro', ingles: 'Meteor', pronunciacion: 'Míttior' },
+        { simbolo: '☄️ Meteorito', ingles: 'Meteorite', pronunciacion: 'Míttiorait' },
+        { simbolo: '🌌 Galaxia', ingles: 'Galaxy', pronunciacion: 'Gálaksi' },
+        { simbolo: '🥛 Vía Láctea', ingles: 'Milky Way', pronunciacion: 'Mílki Uei' },
+        { simbolo: '🌫️ Nebulosa', ingles: 'Nebula', pronunciacion: 'Nébiula' },
+        { simbolo: '🕳️ Agujero negro', ingles: 'Black Hole', pronunciacion: 'Blak Joul' },
+        { simbolo: '🌌 Universo / Cosmos', ingles: 'Universe / Cosmos', pronunciacion: 'Iúnivers / Kósmos' },
+        { simbolo: '🚀 Espacio', ingles: 'Space', pronunciacion: 'Speis' },
+        { simbolo: '🔄 Órbita', ingles: 'Orbit', pronunciacion: 'Órbit' },
+        { simbolo: '⚓ Gravedad', ingles: 'Gravity', pronunciacion: 'Gráviti' },
+        { simbolo: '📡 Satélite', ingles: 'Satellite', pronunciacion: 'Sátelait' },
+        { simbolo: '👨‍🚀 Astronauta', ingles: 'Astronaut', pronunciacion: 'Ástronot' },
+        { simbolo: '🔭 Telescopio', ingles: 'Telescope', pronunciacion: 'Téleskoup' }
+      ],
+      animales: [
+        { simbolo: '🐶 Perro', ingles: 'Dog', pronunciacion: 'Dog' },
+        { simbolo: '🐱 Gato', ingles: 'Cat', pronunciacion: 'Kat' },
+        { simbolo: '🐭 Ratón', ingles: 'Mouse', pronunciacion: 'Maus' },
+        { simbolo: '🐹 Hámster', ingles: 'Hamster', pronunciacion: 'Jámster' },
+        { simbolo: '🐰 Conejo', ingles: 'Rabbit', pronunciacion: 'Rábit' },
+        { simbolo: '🦊 Zorro', ingles: 'Fox', pronunciacion: 'Foks' },
+        { simbolo: '🐻 Oso', ingles: 'Bear', pronunciacion: 'Beer' },
+        { simbolo: '🐼 Panda', ingles: 'Panda', pronunciacion: 'Pánda' },
+        { simbolo: '🐨 Koala', ingles: 'Koala', pronunciacion: 'Kouála' },
+        { simbolo: '🐯 Tigre', ingles: 'Tiger', pronunciacion: 'Táiguer' },
+        { simbolo: '🦁 León', ingles: 'Lion', pronunciacion: 'Láion' },
+        { simbolo: '🐮 Vaca', ingles: 'Cow', pronunciacion: 'Kau' },
+        { simbolo: '🐷 Cerdo', ingles: 'Pig', pronunciacion: 'Pig' },
+        { simbolo: '🐸 Rana', ingles: 'Frog', pronunciacion: 'Frog' },
+        { simbolo: '🐵 Mono', ingles: 'Monkey', pronunciacion: 'Móngki' },
+        { simbolo: '🙈 Chimpancé', ingles: 'Chimpanzee', pronunciacion: 'Chimpanzí' },
+        { simbolo: '🦍 Gorila', ingles: 'Gorilla', pronunciacion: 'Goríla' },
+        { simbolo: '🐔 Gallina', ingles: 'Hen', pronunciacion: 'Jen' },
+        { simbolo: '🐓 Gallo', ingles: 'Rooster', pronunciacion: 'Rúuster' },
+        { simbolo: '🐣 Pollito', ingles: 'Chick', pronunciacion: 'Chik' },
+        { simbolo: '🐦 Pájaro', ingles: 'Bird', pronunciacion: 'Berd' },
+        { simbolo: '🐧 Pingüino', ingles: 'Penguin', pronunciacion: 'Péng-guin' },
+        { simbolo: '🦅 Águila', ingles: 'Eagle', pronunciacion: 'Íiguel' },
+        { simbolo: '🦆 Pato', ingles: 'Duck', pronunciacion: 'Dok' },
+        { simbolo: '🦅 Halcón', ingles: 'Falcon', pronunciacion: 'Fálkon' },
+        { simbolo: '🦉 Búho', ingles: 'Owl', pronunciacion: 'Aul' },
+        { simbolo: '🦇 Murciélago', ingles: 'Bat', pronunciacion: 'Bat' },
+        { simbolo: '🐺 Lobo', ingles: 'Wolf', pronunciacion: 'Uulf' },
+        { simbolo: '🐗 Jabalí', ingles: 'Boar', pronunciacion: 'Bor' },
+        { simbolo: '🐴 Caballo', ingles: 'Horse', pronunciacion: 'Jors' },
+        { simbolo: '🦄 Unicornio', ingles: 'Unicorn', pronunciacion: 'Iúnikorn' },
+        { simbolo: '🐝 Abeja', ingles: 'Bee', pronunciacion: 'Bii' },
+        { simbolo: '🐛 Oruga', ingles: 'Caterpillar', pronunciacion: 'Káter-pilar' },
+        { simbolo: '🦋 Mariposa', ingles: 'Butterfly', pronunciacion: 'Báter-flai' },
+        { simbolo: '🐌 Caracol', ingles: 'Snail', pronunciacion: 'Sneil' },
+        { simbolo: '🐞 Mariquita', ingles: 'Ladybug', pronunciacion: 'Léidibog' },
+        { simbolo: '🐜 Hormiga', ingles: 'Ant', pronunciacion: 'Ant' },
+        { simbolo: '🕷️ Araña', ingles: 'Spider', pronunciacion: 'Spáider' },
+        { simbolo: '🦂 Escorpión', ingles: 'Scorpion', pronunciacion: 'Skórpion' },
+        { simbolo: '🦟 Mosquito', ingles: 'Mosquito', pronunciacion: 'Moskítou' },
+        { simbolo: '🐢 Tortuga', ingles: 'Turtle', pronunciacion: 'Ter-tel' },
+        { simbolo: '🐍 Serpiente', ingles: 'Snake', pronunciacion: 'Sneik' },
+        { simbolo: '🦎 Lagartija', ingles: 'Lizard', pronunciacion: 'Lísard' },
+        { simbolo: '🦖 T-Rex', ingles: 'Dinosaur', pronunciacion: 'Dáinosor' },
+        { simbolo: '🐙 Pulpo', ingles: 'Octopus', pronunciacion: 'Óktopus' },
+        { simbolo: '🦑 Calamar', ingles: 'Squid', pronunciacion: 'Skuid' },
+        { simbolo: '🦐 Camarón', ingles: 'Shrimp', pronunciacion: 'Shrimp' },
+        { simbolo: '🦞 Langosta', ingles: 'Lobster', pronunciacion: 'Lóbster' },
+        { simbolo: '🦀 Cangrejo', ingles: 'Crab', pronunciacion: 'Krab' },
+        { simbolo: '🐬 Delfín', ingles: 'Dolphin', pronunciacion: 'Dólfin' },
+        { simbolo: '🐳 Ballena', ingles: 'Whale', pronunciacion: 'Jueil' },
+        { simbolo: '🦈 Tiburón', ingles: 'Shark', pronunciacion: 'Shark' },
+        { simbolo: '🦭 Foca', ingles: 'Seal', pronunciacion: 'Siil' },
+        { simbolo: '🐟 Pez', ingles: 'Fish', pronunciacion: 'Fish' },
+        { simbolo: '🦩 Flamenco', ingles: 'Flamingo', pronunciacion: 'Flamíng-gou' },
+        { simbolo: '🦚 Pavo Real', ingles: 'Peacock', pronunciacion: 'Píikok' },
+        { simbolo: '🦜 Loro', ingles: 'Parrot', pronunciacion: 'Párot' },
+        { simbolo: '🦢 Cisne', ingles: 'Swan', pronunciacion: 'Suan' },
+        { simbolo: '🦘 Canguro', ingles: 'Kangaroo', pronunciacion: 'Kang-garú' },
+        { simbolo: '🦡 Tejón', ingles: 'Badger', pronunciacion: 'Bádjer' },
+        { simbolo: '🦥 Perezoso', ingles: 'Sloth', pronunciacion: 'Slouz' },
+        { simbolo: '🦦 Nutria', ingles: 'Otter', pronunciacion: 'Óter' },
+        { simbolo: '🦨 Zorrillo', ingles: 'Skunk', pronunciacion: 'Skongk' },
+        { simbolo: '🦔 Erizo', ingles: 'Hedgehog', pronunciacion: 'Jédj-jog' },
+        { simbolo: '🦌 Ciervo', ingles: 'Deer', pronunciacion: 'Diir' },
+        { simbolo: '🦙 Llama', ingles: 'Llama', pronunciacion: 'Láma' },
+        { simbolo: '🐪 Camello', ingles: 'Camel', pronunciacion: 'Kámel' },
+        { simbolo: '🐘 Elefante', ingles: 'Elephant', pronunciacion: 'Élefant' },
+        { simbolo: '🦏 Rinoceronte', ingles: 'Rhinoceros', pronunciacion: 'Rainóseros' },
+        { simbolo: '🦛 Hipopótamo', ingles: 'Hippopotamus', pronunciacion: 'Jipopótamus' },
+        { simbolo: '🐆 Leopardo', ingles: 'Leopard', pronunciacion: 'Lépard' },
+        { simbolo: '🐆 Gépatdo', ingles: 'Cheetah', pronunciacion: 'Chíita' },
+        { simbolo: '🦒 Jirafa', ingles: 'Giraffe', pronunciacion: 'Djiráf' },
+        { simbolo: 'ZEBRA Cebra', ingles: 'Zebra', pronunciacion: 'Zíbra' },
+        { simbolo: '🐐 Cabra', ingles: 'Goat', pronunciacion: 'Gout' },
+        { simbolo: '🐑 Oveja', ingles: 'Sheep', pronunciacion: 'Shiip' },
+        { simbolo: '🦃 Pavo', ingles: 'Turkey', pronunciacion: 'Terki' },
+        { simbolo: '🦤 Dodo', ingles: 'Dodo', pronunciacion: 'Doudou' },
+        { simbolo: '🪶 Pluma', ingles: 'Feather', pronunciacion: 'Féder' },
+        { simbolo: '🦣 Mamut', ingles: 'Mammoth', pronunciacion: 'Mámoz' },
+        { simbolo: '🦫 Castor', ingles: 'Beaver', pronunciacion: 'Bíiver' },
+        { simbolo: '🦡 Mapache', ingles: 'Raccoon', pronunciacion: 'Rakúun' },
+        { simbolo: '🐿️ Ardilla', ingles: 'Squirrel', pronunciacion: 'Skuírel' },
+        { simbolo: '🦔 Puercoespín', ingles: 'Porcupine', pronunciacion: 'Pórkiupain' },
+        { simbolo: '🐊 Cocodrilo', ingles: 'Crocodile', pronunciacion: 'Krókodail' },
+        { simbolo: '🐊 Caimán', ingles: 'Alligator', pronunciacion: 'Áligueitor' },
+        { simbolo: '🪼 Medusa', ingles: 'Jellyfish', pronunciacion: 'Djéli-fish' },
+        { simbolo: '⭐️ Estrella de mar', ingles: 'Starfish', pronunciacion: 'Stár-fish' },
+        { simbolo: '🪪 Ostra', ingles: 'Oyster', pronunciacion: 'Óister' },
+        { simbolo: '🪸 Coral', ingles: 'Coral', pronunciacion: 'Kóral' },
+        { simbolo: '🪰 Mosca', ingles: 'Fly', pronunciacion: 'Flai' },
+        { simbolo: '🪲 Escarabajo', ingles: 'Beetle', pronunciacion: 'Bíitel' },
+        { simbolo: '🦗 Grillo', ingles: 'Cricket', pronunciacion: 'Kríket' },
+        { simbolo: '🪳 Cucaracha', ingles: 'Cockroach', pronunciacion: 'Kókrouch' },
+        { simbolo: '🪱 Lombriz', ingles: 'Worm', pronunciacion: 'Uerm' },
+        { simbolo: '🐉 Dragón', ingles: 'Dragon', pronunciacion: 'Drágon' },
+        { simbolo: '🦅 Vuitre', ingles: 'Vulture', pronunciacion: 'Vólchur' },
+        { simbolo: '🦩 Cigüeña', ingles: 'Stork', pronunciacion: 'Stork' },
+        { simbolo: '🦡 Mofeta', ingles: 'Polecat', pronunciacion: 'Póulkat' },
+        { simbolo: '🦬 Búfalo', ingles: 'Buffalo', pronunciacion: 'Báfalou' }
+      ],
+      cuerpo: [
+        { simbolo: '🗣️ Cabeza', ingles: 'Head', pronunciacion: 'Jed' },
+        { simbolo: '👨 Face / Cara', ingles: 'Face', pronunciacion: 'Feis' },
+        { simbolo: '💇 Cabello', ingles: 'Hair', pronunciacion: 'Jeer' },
+        { simbolo: '👁️ Ojo', ingles: 'Eye', pronunciacion: 'Ai' },
+        { simbolo: '👂 Oreja', ingles: 'Ear', pronunciacion: 'Íir' },
+        { simbolo: '👃 Nariz', ingles: 'Nose', pronunciacion: 'Nous' },
+        { simbolo: '👄 Boca', ingles: 'Mouth', pronunciacion: 'Máuz' },
+        { simbolo: '🦷 Diente', ingles: 'Tooth', pronunciacion: 'Túz' },
+        { simbolo: '👅 Lengua', ingles: 'Tongue', pronunciacion: 'Tong' },
+        { simbolo: '🥖 Cuello', ingles: 'Neck', pronunciacion: 'Nek' },
+        { simbolo: '🤷 Hombro', ingles: 'Shoulder', pronunciacion: 'Shólder' },
+        { simbolo: '🫁 Pecho', ingles: 'Chest', pronunciacion: 'Chest' },
+        { simbolo: '🔙 Espalda', ingles: 'Back', pronunciacion: 'Bak' },
+        { simbolo: '💪 Brazo', ingles: 'Arm', pronunciacion: 'Aarm' },
+        { simbolo: '🦾 Codo', ingles: 'Elbow', pronunciacion: 'Élbou' },
+        { simbolo: '🖐️ Mano', ingles: 'Hand', pronunciacion: 'Jand' },
+        { simbolo: '☝️ Dedo (Mano)', ingles: 'Finger', pronunciacion: 'Fíng-guer' },
+        { simbolo: '👍 Pulgar', ingles: 'Thumb', pronunciacion: 'Zam' },
+        { simbolo: '🦵 Pierna', ingles: 'Leg', pronunciacion: 'Leg' },
+        { simbolo: '🦵 Rodilla', ingles: 'Knee', pronunciacion: 'Níi' },
+        { simbolo: '🦶 Pie', ingles: 'Foot', pronunciacion: 'Fut' },
+        { simbolo: '🦶 Dedo (Pie)', ingles: 'Toe', pronunciacion: 'Tou' },
+        { simbolo: '❤️ Corazón', ingles: 'Heart', pronunciacion: 'Jaart' },
+        { simbolo: '🧠 Cerebro', ingles: 'Brain', pronunciacion: 'Brein' }
+      ],
+      colores: [
+        { simbolo: '🔴 Rojo', ingles: 'Red', pronunciacion: 'Red' },
+        { simbolo: '🔵 Azul', ingles: 'Blue', pronunciacion: 'Blu' },
+        { simbolo: '🟡 Amarillo', ingles: 'Yellow', pronunciacion: 'Ielou' },
+        { simbolo: '🟢 Verde', ingles: 'Green', pronunciacion: 'Griin' },
+        { simbolo: '🟠 Naranja', ingles: 'Orange', pronunciacion: 'Orendj' },
+        { simbolo: '🟣 Morado', ingles: 'Purple', pronunciacion: 'Perpl' },
+        { simbolo: '🌸 Rosado', ingles: 'Pink', pronunciacion: 'Pink' },
+        { simbolo: '🩵 Celeste', ingles: 'Light Blue', pronunciacion: 'Lait Blu' },
+        { simbolo: '🌺 Magenta', ingles: 'Magenta', pronunciacion: 'Madjenta' },
+        { simbolo: '🪙 Plateado', ingles: 'Silver', pronunciacion: 'Silver' },
+        { simbolo: '👑 Dorado', ingles: 'Gold', pronunciacion: 'Gold' },
+        { simbolo: '🪻 Violeta', ingles: 'Violet', pronunciacion: 'Vaiolet' },
+        { simbolo: '🪼 Turquesa', ingles: 'Turquoise', pronunciacion: 'Terkois' },
+        { simbolo: '🩶 Gris', ingles: 'Gray', pronunciacion: 'Grei' },
+        { simbolo: '🤎 Café', ingles: 'Brown', pronunciacion: 'Braul' },
+        { simbolo: '⚪ Blanco', ingles: 'White', pronunciacion: 'Uait' },
+        { simbolo: '🖤 Negro', ingles: 'Black', pronunciacion: 'Blak' },
+        { simbolo: '🏷️ Beige', ingles: 'Beige', pronunciacion: 'Beish' }
+      ],
+      saludos: [
+        { simbolo: 'Hola', ingles: 'Hello', pronunciacion: 'Jelou' },
+        { simbolo: 'Buenos días', ingles: 'Good morning', pronunciacion: 'Gud morning' },
+        { simbolo: 'Buenas tardes', ingles: 'Good afternoon', pronunciacion: 'Gud efternuun' },
+        { simbolo: 'Buenas noches', ingles: 'Good night', pronunciacion: 'Gud nait' },
+        { simbolo: 'Adiós', ingles: 'Goodbye', pronunciacion: 'Gudbai' }
+      ]
+    };
+
+    // Reproducir audio nativo en inglés por defecto
+    function hablar(texto, esEspanol = false) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const mensaje = new SpeechSynthesisUtterance(texto);
+        mensaje.lang = esEspanol ? 'es-ES' : 'en-US';
+        mensaje.rate = 0.85;
+        window.speechSynthesis.speak(mensaje);
+      }
+    }
+
+    // Renderizar tarjetas de los temas
+    function mostrarTema(categoria) {
+      const contenedor = document.getElementById('contenedor-tarjetas');
+      const titulo = document.getElementById('titulo-tema');
+      const instruccion = document.getElementById('instruccion-audio');
+      
+      contenedor.innerHTML = '';
+      
+      const titulos = {
+        abecedario: 'El Abecedario en Inglés',
+        pronombresPersonales: 'Pronombres Personales (Subject Pronouns)',
+        adjetivosPosesivos: 'Adjetivos Posesivos (Possessive Adjectives)',
+        pronombresPosesivos: 'Pronombres Positivos (Possessive Pronouns)',
+        numeros: 'Los Números (1 al Trillón)',
+        ordinales: 'Números Ordinales',
+        dias: 'Días de la Semana',
+        meses: 'Meses del Año',
+        verbosRegulares: '100 Verbos Regulares (Presente / Pasado)',
+        verbosIrregulares: '100 Verbos Irregulares (Presente / Pasado)',
+        familia: 'Miembros de la Familia y Relaciones',
+        universo: 'Universo y Astronomía',
+        animales: 'Los 100 Animales en Inglés',
+        cuerpo: 'Partes del Cuerpo Humano',
+        colores: 'Los Colores',
+        saludos: 'Saludos y Despedidas'
+      };
+      
+      titulo.textContent = titulos[categoria];
+
+      // Renderizado especial interactivo para el abecedario
+      if (categoria === 'abecedario') {
+        instruccion.style.display = 'none';
+        contenedor.className = 'abecedario-container'; // Cambia el grid para tarjetas de abecedario
+        
+        datos[categoria].forEach((item, index) => {
+          const cardLetra = document.createElement('div');
+          cardLetra.className = 'letra-card';
+          cardLetra.innerHTML = `
+            <div class="enunciado-linea">
+              <span>¿Cómo se pronuncia esta letra en la palabra?</span>
+              <span class="circulo-negro" onclick="hablar('${item.ingles}')" title="Escuchar pronunciación">🔴</span>
+            </div>
+            <div class="opciones-abecedario" id="opciones-${index}">
+              <label><input type="radio" name="abec_${index}" value="${item.opciones[0]}"> ${item.opciones[0]}</label>
+              <label><input type="radio" name="abec_${index}" value="${item.opciones[1]}"> ${item.opciones[1]}</label>
+              <label><input type="radio" name="abec_${index}" value="${item.opciones[2]}"> ${item.opciones[2]}</label>
+            </div>
+            <button class="btn-verificar-letra" onclick="verificarAbecedario(${index}, '${item.correcta}')">Verificar</button>
+            <div class="resultado-texto" id="resultado-${index}"></div>
+          `;
+          contenedor.appendChild(cardLetra);
+        });
+        return;
+      }
+
+      // Renderizado estándar para los demás temas
+      contenedor.className = 'grid-cards';
+      instruccion.style.display = 'block';
+
+      datos[categoria].forEach(item => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card';
+        tarjeta.setAttribute('data-pronunciacion', item.pronunciacion);
+        
+        if (item.pasado) {
+          const textoHablar = `${item.ingles}, ${item.pasado}`;
+          tarjeta.onclick = () => hablar(textoHablar);
+          tarjeta.innerHTML = `
+            <div class="main-symbol">${item.simbolo}</div>
+            <div class="word">Pres: ${item.ingles}</div>
+            <div class="past-word">Pas: ${item.pasado}</div>
+            <div class="phonetic">/${item.pronunciacion}/</div>
+          `;
+        } else {
+          tarjeta.onclick = () => hablar(item.ingles);
+          tarjeta.innerHTML = `
+            <div class="main-symbol">${item.simbolo}</div>
+            <div class="word">${item.ingles}</div>
+            <div class="phonetic">/${item.pronunciacion}/</div>
+          `;
+        }
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    // Lógica de verificación interactiva para el abecedario
+    function verificarAbecedario(index, correcta) {
+      const radios = document.getElementsByName(`abec_${index}`);
+      let seleccionada = null;
+
+      for (const r of radios) {
+        if (r.checked) {
+          seleccionada = r.value;
+          break;
+        }
+      }
+
+      const resDiv = document.getElementById(`resultado-${index}`);
+
+      if (!seleccionada) {
+        resDiv.style.color = "orange";
+        resDiv.innerText = "⚠️ Por favor, selecciona una respuesta.";
+        return;
+      }
+
+      if (seleccionada === correcta) {
+        resDiv.style.color = "green";
+        resDiv.innerText = "¡CORRECTO! 🎉";
+      } else {
+        resDiv.style.color = "red";
+        resDiv.innerText = "INCORRECTO ❌";
+      }
+    }
+
+    // Cargar cuestionario dinámico general según la selección de práctica
+    function iniciarPractica(categoria) {
+      if (!categoria || !datos[categoria]) return;
+
+      const contenedor = document.getElementById('contenedor-tarjetas');
+      const titulo = document.getElementById('titulo-tema');
+      const instruccion = document.getElementById('instruccion-audio');
+
+      contenedor.className = 'grid-cards';
+      instruccion.style.display = 'none';
+      
+      const selectPractica = document.getElementById('select-practica');
+      if (selectPractica.value !== categoria) {
+        selectPractica.value = categoria;
+      }
+
+      titulo.textContent = `📝 Práctica Evaluativa`;
+
+      const lista = datos[categoria];
+      let html = `<div style="grid-column: 1 / -1; max-width: 600px;">
+        <p>Responde las siguientes preguntas para evaluar tus conocimientos sobre el tema seleccionado:</p>`;
+
+      const muestra = lista.slice(0, 3);
+
+      muestra.forEach((item, index) => {
+        html += `
+          <div class="pregunta-bloque">
+            <p><strong>Pregunta ${index + 1}:</strong> ¿Cómo se traduce/dice en inglés <strong>"${item.simbolo}"</strong>?</p>
+            <label><input type="radio" name="p${index}" value="correcto"> A) ${item.ingles}</label>
+            <label><input type="radio" name="p${index}" value="falso1"> B) ${lista[(index + 1) % lista.length].ingles}</label>
+            <label><input type="radio" name="p${index}" value="falso2"> C) ${lista[(index + 2) % lista.length].ingles}</label>
+          </div>
+        `;
+      });
+
+      html += `
+        <br>
+        <button class="btn-datos" onclick="alert('¡Excelente práctica realizada!')">Enviar Respuestas</button>
+      </div>`;
+
+      contenedor.innerHTML = html;
+    }
+
+    function activarPracticaGlobal() {
+      const selectPractica = document.getElementById('select-practica');
+      let seleccion = selectPractica.value;
+      
+      if (!seleccion) {
+        seleccion = 'abecedario';
+        selectPractica.value = 'abecedario';
+      }
+      
+      iniciarPractica(seleccion);
+    }
+
+    function abrirModal() {
+      document.getElementById('modal-datos').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-datos').style.display = 'none';
+    }
+
+    function cerrarModalAfuera(event) {
+      if (event.target.id === 'modal-datos') {
+        cerrarModal();
+      }
+    }
+
+    function toggleTema() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function cambiarTamanoTexto(tamano) {
+      document.documentElement.style.setProperty('--tamano-texto', tamano);
+    }
+
+    function cambiarTipoFuente(fuente) {
+      document.documentElement.style.setProperty('--fuente-actual', fuente);
+    }
+  </script>
+</body>
+</html>
